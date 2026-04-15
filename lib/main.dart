@@ -104,6 +104,14 @@ class UserDashboardPage extends StatelessWidget {
   final int currentPage;
   final int totalPages;
 
+  static const List<String> _destinations = [
+    'Salud',
+    'Ingenierías',
+    'Negocios',
+    'Humanidades',
+    'Sorteo',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +127,19 @@ class UserDashboardPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
                 child: Column(
                   children: [
-                    _MapSelectionCard(onBack: () => Navigator.of(context).pop()),
+                    _MapSelectionCard(
+                      onBack: () => Navigator.of(context).pop(),
+                      onSelectParking: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => DestinationSelectionPage(
+                              userType: userType,
+                              destinations: _destinations,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     const SizedBox(height: 16),
                     const _RecentParkingCard(),
                   ],
@@ -213,9 +233,10 @@ class _UserScreenHeader extends StatelessWidget {
 }
 
 class _MapSelectionCard extends StatelessWidget {
-  const _MapSelectionCard({required this.onBack});
+  const _MapSelectionCard({required this.onBack, required this.onSelectParking});
 
   final VoidCallback onBack;
+  final VoidCallback onSelectParking;
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +296,7 @@ class _MapSelectionCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onSelectParking,
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: const Color(0xFFFF8C25),
@@ -292,6 +313,128 @@ class _MapSelectionCard extends StatelessWidget {
               child: const Text('Elegir un Estacionamiento'),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class DestinationSelectionPage extends StatelessWidget {
+  const DestinationSelectionPage({
+    super.key,
+    required this.userType,
+    required this.destinations,
+  });
+
+  final String userType;
+  final List<String> destinations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const _UserScreenHeader(title: 'Estacionamientos', pageCounter: '2/2'),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
+                child: _DestinationCard(
+                  onBack: () => Navigator.of(context).pop(),
+                  userType: userType,
+                  destinations: destinations,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DestinationCard extends StatelessWidget {
+  const _DestinationCard({
+    required this.onBack,
+    required this.userType,
+    required this.destinations,
+  });
+
+  final VoidCallback onBack;
+  final String userType;
+  final List<String> destinations;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 24),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F4F4),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton.filled(
+              onPressed: onBack,
+              style: IconButton.styleFrom(
+                backgroundColor: const Color(0xFFFF8C25),
+                foregroundColor: Colors.white,
+                fixedSize: const Size(42, 42),
+              ),
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '¿A donde desea ir?',
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 22,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 16),
+          for (final destination in destinations) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '$userType: destino "$destination" seleccionado.',
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color(0xFFFF8C25),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 40 / 2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                child: Text(destination),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
         ],
       ),
     );
