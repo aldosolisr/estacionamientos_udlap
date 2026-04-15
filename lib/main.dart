@@ -70,7 +70,6 @@ class UserTypePrototypePage extends StatelessWidget {
                               MaterialPageRoute<void>(
                                 builder: (_) => UserDashboardPage(
                                   userType: _userTypes[i],
-                                  currentPage: i + 1,
                                   totalPages: _userTypes.length,
                                 ),
                               ),
@@ -96,12 +95,10 @@ class UserDashboardPage extends StatelessWidget {
   const UserDashboardPage({
     super.key,
     required this.userType,
-    required this.currentPage,
     required this.totalPages,
   });
 
   final String userType;
-  final int currentPage;
   final int totalPages;
 
   static const List<String> _destinations = [
@@ -120,7 +117,6 @@ class UserDashboardPage extends StatelessWidget {
           children: [
             _UserScreenHeader(
               title: 'Usuario $userType',
-              pageCounter: '$currentPage/$totalPages',
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -194,10 +190,9 @@ class _LandingHeader extends StatelessWidget {
 }
 
 class _UserScreenHeader extends StatelessWidget {
-  const _UserScreenHeader({required this.title, required this.pageCounter});
+  const _UserScreenHeader({required this.title});
 
   final String title;
-  final String pageCounter;
 
   @override
   Widget build(BuildContext context) {
@@ -216,14 +211,6 @@ class _UserScreenHeader extends StatelessWidget {
                 fontSize: 46 / 2,
                 fontWeight: FontWeight.w400,
               ),
-            ),
-          ),
-          Text(
-            pageCounter,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -335,7 +322,7 @@ class DestinationSelectionPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const _UserScreenHeader(title: 'Estacionamientos', pageCounter: '2/2'),
+            const _UserScreenHeader(title: 'Estacionamientos'),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
