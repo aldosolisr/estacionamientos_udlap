@@ -7,7 +7,6 @@ import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../utils/url_opener.dart';
 import '../widgets/parking_button.dart';
-import '../widgets/visitor_access_card.dart';
 import 'zone_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -41,20 +40,13 @@ class DashboardScreen extends StatelessWidget {
         children: [
           const _GreetingCard(),
           const SizedBox(height: 18),
-          if (userType == 'Visitas') ...[
-            const VisitorAccessCard(
-              subtitle:
-                  'Pídele al anfitrión que registre tu visita en este enlace.',
-            ),
-            const SizedBox(height: 18),
-          ],
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
             mainAxisSpacing: 14,
             crossAxisSpacing: 14,
-            childAspectRatio: 0.95,
+            childAspectRatio: 0.82,
             children: [
               for (final zone in kParkingZones) _ZoneCard(zone: zone),
             ],
@@ -167,7 +159,7 @@ class _ZoneCard extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,8 +204,8 @@ class _ZoneCard extends StatelessWidget {
                                 .length;
                             return Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 4,
+                                horizontal: 10,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.udlapOrange,
