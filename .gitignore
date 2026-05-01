@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .DS_Store
+.gitignore
 .atom/
 .build/
 .buildlog/
