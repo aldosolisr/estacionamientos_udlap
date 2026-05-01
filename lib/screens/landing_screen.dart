@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 
 import '../data/parking_data.dart';
+import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import 'dashboard_screen.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
 
+  Future<void> _selectUser(BuildContext context, String userType) async {
+    final services = AppServicesScope.of(context);
+    await services.preferences.setLastUserType(userType);
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (_) => DashboardScreen(userType: userType),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final services = AppServicesScope.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.pageSurface,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -23,11 +37,41 @@ class LandingScreen extends StatelessWidget {
                       const _BrandHero(),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 28, 20, 28),
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
                           child: Center(
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 480),
-                              child: const _UserTypeCard(),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ListenableBuilder(
+                                    listenable: services.preferences,
+                                    builder: (context, _) {
+                                      final last =
+                                          services.preferences.lastUserType;
+                                      if (last == null ||
+                                          !kUserTypes.contains(last)) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 14),
+                                        child: _ContinueAsCard(
+                                          userType: last,
+                                          onContinue: () =>
+                                              _selectUser(context, last),
+                                          onChange: () => services.preferences
+                                              .clearLastUserType(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  _UserTypeCard(
+                                    onSelect: (type) =>
+                                        _selectUser(context, type),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -52,9 +96,11 @@ class _BrandHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: AppColors.udlapGreen,
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        color: context.isDark
+            ? AppColors.udlapGreenDark
+            : AppColors.udlapGreen,
+        borderRadius: const BorderRadius.vertical(
           bottom: Radius.circular(AppRadii.card),
         ),
       ),
@@ -88,59 +134,115 @@ class _BrandHero extends StatelessWidget {
   }
 }
 
-class _UserTypeCard extends StatelessWidget {
-  const _UserTypeCard();
+class _ContinueAsCard extends StatelessWidget {
+  const _ContinueAsCard({
+    required this.userType,
+    required this.onContinue,
+    required this.onChange,
+  });
+
+  final String userType;
+  final VoidCallback onContinue;
+  final VoidCallback onChange;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.cardSurface,
         borderRadius: BorderRadius.circular(AppRadii.card),
-        boxShadow: AppShadows.card,
+        boxShadow: context.cardShadow,
+        border: Border.all(color: AppColors.udlapOrange, width: 2),
       ),
-      padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            '¿Quién eres?',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.udlapGreen,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+          Row(
+            children: [
+              const Icon(
+                Icons.person_outline,
+                color: AppColors.udlapOrange,
+                size: 22,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Última sesión',
+                  style: TextStyle(
+                    color: context.mutedText,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: onChange,
+                child: const Text('Cambiar'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              userType,
+              style: TextStyle(
+                color: context.headingAccent,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+              ),
             ),
           ),
-          const SizedBox(height: 18),
-          for (int i = 0; i < kUserTypes.length; i++) ...[
-            _UserTypeButton(label: kUserTypes[i]),
-            if (i != kUserTypes.length - 1) const SizedBox(height: 12),
-          ],
+          ElevatedButton.icon(
+            onPressed: onContinue,
+            icon: const Icon(Icons.login_outlined),
+            label: Text('Continuar como $userType'),
+          ),
         ],
       ),
     );
   }
 }
 
-class _UserTypeButton extends StatelessWidget {
-  const _UserTypeButton({required this.label});
+class _UserTypeCard extends StatelessWidget {
+  const _UserTypeCard({required this.onSelect});
 
-  final String label;
+  final ValueChanged<String> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => DashboardScreen(userType: label),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.cardSurface,
+        borderRadius: BorderRadius.circular(AppRadii.card),
+        boxShadow: context.cardShadow,
+      ),
+      padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '¿Quién eres?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: context.headingAccent,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        );
-      },
-      child: Text(label),
+          const SizedBox(height: 18),
+          for (int i = 0; i < kUserTypes.length; i++) ...[
+            ElevatedButton(
+              onPressed: () => onSelect(kUserTypes[i]),
+              child: Text(kUserTypes[i]),
+            ),
+            if (i != kUserTypes.length - 1) const SizedBox(height: 12),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -152,7 +254,7 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.udlapGreen,
+      color: context.isDark ? AppColors.udlapGreenDark : AppColors.udlapGreen,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: const Text(
         'Prototipo 1.0 — Aplicación de estacionamientos UDLAP',
