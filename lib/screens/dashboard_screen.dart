@@ -7,6 +7,7 @@ import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../utils/url_opener.dart';
 import '../widgets/parking_button.dart';
+import '../widgets/visitor_access_card.dart';
 import 'zone_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -40,6 +41,13 @@ class DashboardScreen extends StatelessWidget {
         children: [
           const _GreetingCard(),
           const SizedBox(height: 18),
+          if (userType == 'Visitas') ...[
+            const VisitorAccessCard(
+              subtitle:
+                  'Pídele al anfitrión que registre tu visita en este enlace.',
+            ),
+            const SizedBox(height: 18),
+          ],
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

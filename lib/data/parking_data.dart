@@ -206,6 +206,9 @@ const List<String> kUserTypes = <String>[
   'Visitas',
 ];
 
+const String kVisitorAccessUrl =
+    'https://aplicaciones.udlap.mx/accesos/Login.aspx';
+
 List<ParkingLot> get kUnmappedParkingLots {
   final mapped = <int>{
     for (final z in kParkingZones)

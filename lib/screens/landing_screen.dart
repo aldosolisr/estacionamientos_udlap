@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/parking_data.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
+import '../widgets/visitor_access_card.dart';
 import 'dashboard_screen.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -69,6 +70,11 @@ class LandingScreen extends StatelessWidget {
                                   _UserTypeCard(
                                     onSelect: (type) =>
                                         _selectUser(context, type),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  const VisitorAccessCard(
+                                    subtitle:
+                                        'Si vienes a recibir a alguien, registra el acceso aquí.',
                                   ),
                                 ],
                               ),
