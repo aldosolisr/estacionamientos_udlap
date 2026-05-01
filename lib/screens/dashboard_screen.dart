@@ -6,6 +6,7 @@ import '../models/parking_zone.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../utils/url_opener.dart';
+import '../widgets/destination_banner.dart';
 import '../widgets/parking_button.dart';
 import 'zone_screen.dart';
 
@@ -38,6 +39,7 @@ class DashboardScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(18),
         children: [
+          const DestinationBanner(),
           const _GreetingCard(),
           const SizedBox(height: 18),
           GridView.count(
@@ -330,6 +332,7 @@ class _RecentParkingsCard extends StatelessWidget {
 
   Future<void> _open(BuildContext context, ParkingLot lot) async {
     final services = AppServicesScope.of(context);
+    services.destination.setDestination(lot);
     await services.recents.push(lot.id);
     if (!context.mounted) return;
     await openExternalUrl(context, lot.googleMapsUrl);
@@ -397,6 +400,7 @@ class _UnmappedParkingsCard extends StatelessWidget {
 
   Future<void> _open(BuildContext context, ParkingLot lot) async {
     final services = AppServicesScope.of(context);
+    services.destination.setDestination(lot);
     await services.recents.push(lot.id);
     if (!context.mounted) return;
     await openExternalUrl(context, lot.googleMapsUrl);

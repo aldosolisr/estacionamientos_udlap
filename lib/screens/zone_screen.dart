@@ -5,6 +5,7 @@ import '../models/parking_zone.dart';
 import '../services/app_services.dart';
 import '../theme/app_theme.dart';
 import '../utils/url_opener.dart';
+import '../widgets/next_tick_label.dart';
 import '../widgets/occupancy_legend.dart';
 import '../widgets/parking_button.dart';
 import '../widgets/parking_map.dart';
@@ -16,6 +17,7 @@ class ZoneScreen extends StatelessWidget {
 
   Future<void> _openLot(BuildContext context, ParkingLot lot) async {
     final services = AppServicesScope.of(context);
+    services.destination.setDestination(lot);
     await services.recents.push(lot.id);
     if (!context.mounted) return;
     await openExternalUrl(context, lot.googleMapsUrl);
@@ -109,6 +111,8 @@ class _HeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const OccupancyLegend(),
+          const SizedBox(height: 10),
+          const NextTickLabel(),
         ],
       ),
     );
