@@ -1,16 +1,14 @@
-# estacionamientos_udlap
+# Estacionamientos UDLAP
 
-A new Flutter project.
+Aplicación Flutter para consultar zonas y estacionamientos del campus UDLAP, con estado de ocupación simulado, accesos rápidos a Google Maps y seguimiento de destino.
 
-## Getting Started
+## Documentación
 
-This project is a starting point for a Flutter application.
+La documentación completa del sistema está en la carpeta [`docs/`](./docs/README.md).
 
-A few resources to get you started if this is your first Flutter project:
+## Ejecución rápida
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run
+```
